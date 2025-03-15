@@ -1,0 +1,95 @@
+MONTE CARLO SİMÜLASYONU RAPORU
+============================
+
+1. GİRİŞ
+--------
+Bu rapor, rastgele sayı üretimi ve Monte Carlo simülasyonu kullanarak banka müşterilerinin hizmet sürelerini modelleyen bir C programının geliştirilmesini ve sonuçlarını açıklamaktadır.
+
+2. YÖNTEM
+---------
+2.1. Rastgele Sayı Üretimi
+--------------------------
+Programda, C'nin standart kütüphanesinde bulunan rand() fonksiyonu kullanılarak rastgele tam sayılar üretilmiştir. Bu tam sayılar, RAND_MAX değerine bölünerek 0.0 ile 1.0 arasında uniform dağılımlı rastgele sayılara dönüştürülmüştür:
+
+```c
+double generate_random_uniform() {
+    return (double)rand() / RAND_MAX;
+}
+```
+
+2.2. Hizmet Süresi Ataması
+-------------------------
+Üretilen rastgele sayılar, belirli olasılıklarla üç farklı hizmet süresine atanmıştır:
+- Ts-1 (4 dakika): %35 olasılık (0.0 - 0.35 aralığı)
+- Ts-2 (8 dakika): %50 olasılık (0.35 - 0.85 aralığı)
+- Ts-3 (12 dakika): %15 olasılık (0.85 - 1.0 aralığı)
+
+```c
+int determine_service_time(double random_num) {
+    if (random_num < 0.35) {
+        return TS_1;
+    } else if (random_num < 0.85) { // 0.35 + 0.50 = 0.85
+        return TS_2;
+    } else {
+        return TS_3;
+    }
+}
+```
+
+3. SONUÇLAR
+-----------
+3.1. 100 Müşteri Simülasyonu
+---------------------------
+100 müşteri için yapılan simülasyonda aşağıdaki sonuçlar elde edilmiştir:
+- Ts-1 (4 dakika): 37 müşteri (%37.00)
+- Ts-2 (8 dakika): 53 müşteri (%53.00)
+- Ts-3 (12 dakika): 10 müşteri (%10.00)
+
+3.2. 1000 Müşteri Simülasyonu
+----------------------------
+1000 müşteri için yapılan genişletilmiş simülasyonda aşağıdaki sonuçlar elde edilmiştir:
+- Ts-1 (4 dakika): 371 müşteri (%37.10) - Beklenen: 350 (%35.00)
+- Ts-2 (8 dakika): 492 müşteri (%49.20) - Beklenen: 500 (%50.00)
+- Ts-3 (12 dakika): 137 müşteri (%13.70) - Beklenen: 150 (%15.00)
+
+Sapma Analizi:
+- Ts-1: Fark = 21 (%2.10)
+- Ts-2: Fark = -8 (%0.80)
+- Ts-3: Fark = -13 (%1.30)
+
+Toplam hizmet süresi: 7064 dakika
+Ortalama hizmet süresi: 7.06 dakika
+
+4. TARTIŞMA
+-----------
+4.1. 100 Müşteri Simülasyonu Değerlendirmesi
+-------------------------------------------
+100 müşteri için yapılan simülasyonda, hizmet sürelerinin dağılımı beklenen olasılıklardan biraz farklı çıkmıştır:
+- Ts-1: %37.00 (beklenen %35.00) -> %2.00 sapma
+- Ts-2: %53.00 (beklenen %50.00) -> %3.00 sapma
+- Ts-3: %10.00 (beklenen %15.00) -> %5.00 sapma
+
+Bu sapmalar, örneklem sayısının nispeten az olmasından kaynaklanmaktadır. Rastgele sayı üretiminde, örneklem sayısı arttıkça gerçek olasılıklara yaklaşılması beklenir.
+
+4.2. 1000 Müşteri Simülasyonu Değerlendirmesi
+--------------------------------------------
+1000 müşteri için yapılan simülasyonda, hizmet sürelerinin dağılımı beklenen olasılıklara daha yakın çıkmıştır:
+- Ts-1: %37.10 (beklenen %35.00) -> %2.10 sapma
+- Ts-2: %49.20 (beklenen %50.00) -> %0.80 sapma
+- Ts-3: %13.70 (beklenen %15.00) -> %1.30 sapma
+
+Örneklem sayısı arttıkça, sapmaların azaldığı gözlemlenmiştir. Bu durum, Monte Carlo simülasyonunun temel prensiplerinden biridir: Örneklem sayısı arttıkça, sonuçlar gerçek olasılık dağılımına yaklaşır.
+
+4.3. Ortalama Hizmet Süresi Analizi
+----------------------------------
+1000 müşteri için ortalama hizmet süresi 7.06 dakika olarak hesaplanmıştır. Teorik olarak beklenen ortalama hizmet süresi şu şekilde hesaplanabilir:
+
+Beklenen ortalama = (4 * 0.35) + (8 * 0.50) + (12 * 0.15) = 1.4 + 4.0 + 1.8 = 7.2 dakika
+
+Simülasyon sonucu (7.06 dakika), teorik beklenen değere (7.2 dakika) oldukça yakındır. Bu da simülasyonun doğru çalıştığını göstermektedir.
+
+5. SONUÇ
+--------
+Bu çalışmada, Monte Carlo simülasyonu kullanılarak banka müşterilerinin hizmet süreleri modellenmiştir. Simülasyon sonuçları, örneklem sayısı arttıkça beklenen olasılık dağılımına yaklaştığını göstermiştir. 1000 müşteri için yapılan simülasyonda, hizmet sürelerinin dağılımı ve ortalama hizmet süresi, teorik beklenen değerlere oldukça yakın çıkmıştır.
+
+Monte Carlo simülasyonu, rastgele olayların modellenmesinde ve olasılık dağılımlarının anlaşılmasında etkili bir yöntemdir. Bu çalışma, rastgele sayı üretimi ve Monte Carlo simülasyonunun temel prensiplerini anlamak için iyi bir örnek teşkil etmektedir. 

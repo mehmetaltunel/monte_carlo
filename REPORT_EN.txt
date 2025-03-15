@@ -1,0 +1,95 @@
+MONTE CARLO SIMULATION REPORT
+============================
+
+1. INTRODUCTION
+--------------
+This report describes the development and results of a C program that models bank customer service times using random number generation and Monte Carlo simulation.
+
+2. METHODOLOGY
+-------------
+2.1. Random Number Generation
+----------------------------
+The program uses the rand() function from C's standard library to generate random integers. These integers are converted to uniformly distributed random numbers between 0.0 and 1.0 by dividing by RAND_MAX:
+
+```c
+double generate_random_uniform() {
+    return (double)rand() / RAND_MAX;
+}
+```
+
+2.2. Service Time Assignment
+---------------------------
+The generated random numbers are assigned to three different service times with specific probabilities:
+- Ts-1 (4 minutes): 35% probability (range 0.0 - 0.35)
+- Ts-2 (8 minutes): 50% probability (range 0.35 - 0.85)
+- Ts-3 (12 minutes): 15% probability (range 0.85 - 1.0)
+
+```c
+int determine_service_time(double random_num) {
+    if (random_num < 0.35) {
+        return TS_1;
+    } else if (random_num < 0.85) { // 0.35 + 0.50 = 0.85
+        return TS_2;
+    } else {
+        return TS_3;
+    }
+}
+```
+
+3. RESULTS
+----------
+3.1. 100 Customer Simulation
+---------------------------
+The simulation for 100 customers yielded the following results:
+- Ts-1 (4 minutes): 37 customers (37.00%)
+- Ts-2 (8 minutes): 53 customers (53.00%)
+- Ts-3 (12 minutes): 10 customers (10.00%)
+
+3.2. 1000 Customer Simulation
+----------------------------
+The extended simulation for 1000 customers yielded the following results:
+- Ts-1 (4 minutes): 371 customers (37.10%) - Expected: 350 (35.00%)
+- Ts-2 (8 minutes): 492 customers (49.20%) - Expected: 500 (50.00%)
+- Ts-3 (12 minutes): 137 customers (13.70%) - Expected: 150 (15.00%)
+
+Deviation Analysis:
+- Ts-1: Difference = 21 (2.10%)
+- Ts-2: Difference = -8 (0.80%)
+- Ts-3: Difference = -13 (1.30%)
+
+Total service time: 7064 minutes
+Average service time: 7.06 minutes
+
+4. DISCUSSION
+-------------
+4.1. 100 Customer Simulation Assessment
+--------------------------------------
+In the simulation for 100 customers, the distribution of service times differed slightly from the expected probabilities:
+- Ts-1: 37.00% (expected 35.00%) -> 2.00% deviation
+- Ts-2: 53.00% (expected 50.00%) -> 3.00% deviation
+- Ts-3: 10.00% (expected 15.00%) -> 5.00% deviation
+
+These deviations are due to the relatively small sample size. In random number generation, as the sample size increases, the results are expected to approach the true probabilities.
+
+4.2. 1000 Customer Simulation Assessment
+---------------------------------------
+In the simulation for 1000 customers, the distribution of service times was closer to the expected probabilities:
+- Ts-1: 37.10% (expected 35.00%) -> 2.10% deviation
+- Ts-2: 49.20% (expected 50.00%) -> 0.80% deviation
+- Ts-3: 13.70% (expected 15.00%) -> 1.30% deviation
+
+It was observed that as the sample size increased, the deviations decreased. This is one of the fundamental principles of Monte Carlo simulation: as the sample size increases, the results approach the true probability distribution.
+
+4.3. Average Service Time Analysis
+---------------------------------
+The average service time for 1000 customers was calculated as 7.06 minutes. The theoretically expected average service time can be calculated as follows:
+
+Expected average = (4 * 0.35) + (8 * 0.50) + (12 * 0.15) = 1.4 + 4.0 + 1.8 = 7.2 minutes
+
+The simulation result (7.06 minutes) is very close to the theoretical expected value (7.2 minutes). This indicates that the simulation is working correctly.
+
+5. CONCLUSION
+-------------
+In this study, bank customer service times were modeled using Monte Carlo simulation. The simulation results showed that as the sample size increased, the results approached the expected probability distribution. In the simulation for 1000 customers, the distribution of service times and the average service time were very close to the theoretical expected values.
+
+Monte Carlo simulation is an effective method for modeling random events and understanding probability distributions. This study serves as a good example for understanding the basic principles of random number generation and Monte Carlo simulation. 
